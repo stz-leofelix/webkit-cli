@@ -33,15 +33,15 @@
 #define BOLD_WHITE   "\033[1;37m"
 
 // Program Informations
-#define PROGRAM_VERSION "0.4.0"
+#define PROGRAM_VERSION "0.4.4"
 #define PROGRAM_PRODUCTION_CHANNEL "ALPHA RELEASE"
 
-// Function Command standard
+// Function Command
 void cmd_help_all(void);
 void cmd_version(void);
 
-// Function Command
 void cmd_init(void);
+void cmd_init_help(void);
 
 // Dispatch Table
 typedef struct {
@@ -55,16 +55,25 @@ CMD DISPATCH[] = {
     {"--help", cmd_help_all},
 
     {"init", cmd_init},
+    {"init -h", cmd_init_help},
+    {"init --help", cmd_init_help},
 
     {"version", cmd_version},
     {"-v", cmd_version},
     {"--version", cmd_version},
 };
 
-int cmdcount = 6;
+int cmdcount = 9;
 
 int main(int argc, char *argv[])
 {
+    // Force help function call if no arguments provided
+    if (argc == 1) {
+        cmd_help_all();
+        printf("\n");
+        return 404;
+    }
+
     // Get the formatted full string argument of program input
     int total_length = 0;
     for (int i = 1; i < argc; i++)
@@ -84,11 +93,35 @@ int main(int argc, char *argv[])
     for (int i = 0; i < cmdcount; i++) {
         if (strcmp(DISPATCH[i].name, input) == 0) {
             DISPATCH[i].func();
+            printf("\n");
             free(input);
             return 0;
             break;
         }
     }
+}
+
+// CMD init help
+void cmd_init_help(void) {
+    printf(
+        BOLD_BLUE "Usage: " COLOR_RESET "webkit init [type] [options]\n"
+        "If type is not given then it's automatically set to "BOLD_BLUE"standard"COLOR_RESET"\n\n"
+        BOLD_BLUE "Types:\n" COLOR_RESET
+        "  high                  Initialize higher standard webkit repo (Suitable for big projects and websites)\n"
+        "  standard              Initialize standard webkit repo\n"
+        "  starter               Initialize a small standard webkit repo (Suitable for small sites or projects)\n"
+        "  lite                  Initialize lite standard webkit repo (Suitable for very small tests or simple one page sites)\n\n"
+        BOLD_BLUE "Options:\n" COLOR_RESET
+        "  -h, --help            Display instruction on usage\n"
+        "  -f, --force           Delete all files and initalize a repo\n"
+        "  -m, --migrate         Migrate already existing files into the initialized repo\n"
+        "  -q, --quiet           Suppress all stdout messages\n\n"
+        BOLD_BLUE "Examples:\n" COLOR_RESET
+        "  $ webkit init\n"
+        "  $ webkit init starter\n"
+        "  $ webkit init lite -h\n"
+        "  $ webkit init high --migrate\n"
+    );
 }
 
 // CMD init
@@ -255,27 +288,21 @@ void cmd_init(void)
 void cmd_help_all(void) {
     printf(
         BOLD_CYAN "WEBKIT "PROGRAM_VERSION" ("PROGRAM_PRODUCTION_CHANNEL")\n\n" COLOR_RESET
-        BOLD_BLUE "Usage: " COLOR_RESET "webkit <command> "COLOR_BLACK"[options]\n\n" COLOR_RESET
+        BOLD_BLUE "Usage: " COLOR_RESET "webkit <command> [options]\n\n"
         BOLD_BLUE "Commands:\n" COLOR_RESET
         "  init                  Initialize standard webkit repository\n"
-        "  help                  Display commands and instructions on usage\n\n"
-        BOLD_BLUE "Types:\n" COLOR_RESET
-        "  high                  Initialize higher standard webkit repo (Suitable for big projects and websites)\n"
-        "  starter               Initialize a small standard webkit repo (Suitable for small sites or projects)\n"
-        "  lite                  Initialize lite standard webkit repo (Suitable for very small tests or simple one page sites)\n\n"
+        "  help                  Display commands and instructions on usage\n\n" 
         BOLD_BLUE "Options:\n" COLOR_RESET
         "  -v, --version         Outputs the current version\n"
         "  -h, --help            Display commands and instruction on usage\n"
-        "  -f, --force           Delete all files and initalize a repo\n"
-        "  -m, --migrate         Migrate already existing files into the initialized repo\n"
-        "  -q, --quiet           Suppress all stdout messages\n\n"
         BOLD_BLUE "Examples:\n" COLOR_RESET
-        BOLD_BLACK"  $ "COLOR_RESET"webkit init\n"
-        BOLD_BLACK"  $ "COLOR_RESET"webkit init --force\n"
-        BOLD_BLACK"  $ "COLOR_RESET"webkit --help\n\n"
+        "  $ webkit init\n"
+        "  $ webkit init --help\n"
     );
 }
 
 void cmd_version(void) {
-    printf("WEBKIT VERSION "PROGRAM_VERSION);
+    printf("WEBKIT VERSION "BOLD_BLUE "("PROGRAM_VERSION ")"COLOR_RESET "\n\n");
+    printf("Version: "PROGRAM_VERSION "\n");
+    printf("Production Channel: "PROGRAM_PRODUCTION_CHANNEL "\n");
 }
