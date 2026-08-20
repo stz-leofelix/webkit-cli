@@ -33,30 +33,61 @@
 #define BOLD_WHITE   "\033[1;37m"
 
 // Program Informations
-#define PROGRAM_VERSION "0.2.1"
+#define PROGRAM_VERSION "0.4.0"
 #define PROGRAM_PRODUCTION_CHANNEL "ALPHA RELEASE"
 
 // Function Command standard
-void cmds_help_all(void);
+void cmd_help_all(void);
+void cmd_version(void);
 
 // Function Command
 void cmd_init(void);
 
+// Dispatch Table
+typedef struct {
+    char *name;
+    void (*func)(void);
+} CMD;
+
+CMD DISPATCH[] = {
+    {"help", cmd_help_all},
+    {"-h", cmd_help_all},
+    {"--help", cmd_help_all},
+
+    {"init", cmd_init},
+
+    {"version", cmd_version},
+    {"-v", cmd_version},
+    {"--version", cmd_version},
+};
+
+int cmdcount = 6;
+
 int main(int argc, char *argv[])
 {
-    printf("\n");
-    // Check if user gives no argument or ask for help
-    if (argc == 1 || argc ==  2 && strcmp(argv[1], "help") || argc ==  2 && strcmp(argv[1], "-h") || argc ==  2 && strcmp(argv[1], "--help"))
+    // Get the formatted full string argument of program input
+    int total_length = 0;
+    for (int i = 1; i < argc; i++)
     {
-        cmds_help_all();
-        return 0;
+        total_length += strlen(argv[i]);
+    }
+    char *input = malloc(sizeof(char) * total_length + 2);
+    *input = '\0';
+    for (int i = 1; i < argc; i++)
+    {
+        strcat(input, argv[i]);
+        if (i < argc - 1) 
+            strcat(input, " ");
     }
 
-    // Initialize standard repository | init
-    if (strcmp(argv[1], "init") == 0 && argc == 2)
-    {
-        cmd_init();
-        return 0;
+    // Check if the input exists in DISPATCH then call the corresponding function if it do exist
+    for (int i = 0; i < cmdcount; i++) {
+        if (strcmp(DISPATCH[i].name, input) == 0) {
+            DISPATCH[i].func();
+            free(input);
+            return 0;
+            break;
+        }
     }
 }
 
@@ -131,6 +162,7 @@ void cmd_init(void)
     if (style_css == NULL)
         printf(COLOR_RED "Failure: " COLOR_RESET "Unable to create file css/style.css");
     else {
+        fprintf(style_css, "/* WEBKIT CSS content here */");
         fclose(style_css);
         printf(COLOR_GREEN "Success: " COLOR_RESET "Created file css/style.css\n");
     }
@@ -141,7 +173,7 @@ void cmd_init(void)
         printf(COLOR_RED "Failure: " COLOR_RESET "Unable to create file css/reset.css");
     else {
         fprintf(reset_css,
-            "/* WEBKIT standard css/reset.css */\n"
+            "/* WEBKIT Standard css/reset.css */\n"
             "/* http://meyerweb.com/eric/tools/css/reset/ \n"
             "   v2.0 | 20110126\n"
             "   License: none (public domain)\n"
@@ -199,25 +231,38 @@ void cmd_init(void)
     if (script_js == NULL)
         printf(COLOR_RED "Failure: " COLOR_RESET "Unable to create file js/script.js");
     else {
+        fprintf(script_js, "// WEBKIT javascript content here");
         fclose(script_js);
         printf(COLOR_GREEN "Success: " COLOR_RESET "Created file js/script.js\n");
     }
 
-    printf("\nInitialized " BOLD_BLUE "STANDARD WEBKIT" COLOR_RESET " repository\n\n");
+    // CREATE README.MD | README.md
+    FILE *readme_md = fopen("README.md", "w");
+    if (readme_md == NULL)
+        printf(COLOR_RED "Failure: " COLOR_RESET "Unable to create file README.md");
+    else {
+        fprintf(readme_md, "<!-- WEBKIT README content here -->");
+        fclose(readme_md);
+        printf(COLOR_GREEN "Success: " COLOR_RESET "Created file README.md\n");
+    }
 
+    printf("\nInitialized " BOLD_BLUE "STANDARD WEBKIT" COLOR_RESET " repository\n\n");
 }
 
-void cmds_help_all(void) {
+// CMD init high
+
+
+void cmd_help_all(void) {
     printf(
-        BOLD_CYAN "WEBKIT "PROGRAM_VERSION" ("PROGRAM_PRODUCTION_CHANNEL")\n" COLOR_RESET
-        COLOR_BLACK "A minimal repo generator tool for Web Development Currently only designed for vanilla projects without frameworks.\n\n" COLOR_RESET
+        BOLD_CYAN "WEBKIT "PROGRAM_VERSION" ("PROGRAM_PRODUCTION_CHANNEL")\n\n" COLOR_RESET
         BOLD_BLUE "Usage: " COLOR_RESET "webkit <command> "COLOR_BLACK"[options]\n\n" COLOR_RESET
         BOLD_BLUE "Commands:\n" COLOR_RESET
         "  init                  Initialize standard webkit repository\n"
         "  help                  Display commands and instructions on usage\n\n"
         BOLD_BLUE "Types:\n" COLOR_RESET
         "  high                  Initialize higher standard webkit repo (Suitable for big projects and websites)\n"
-        "  starter               Initialize a small standard webkit repo (Suitable for small sites or projects)\n\n"
+        "  starter               Initialize a small standard webkit repo (Suitable for small sites or projects)\n"
+        "  lite                  Initialize lite standard webkit repo (Suitable for very small tests or simple one page sites)\n\n"
         BOLD_BLUE "Options:\n" COLOR_RESET
         "  -v, --version         Outputs the current version\n"
         "  -h, --help            Display commands and instruction on usage\n"
@@ -229,4 +274,8 @@ void cmds_help_all(void) {
         BOLD_BLACK"  $ "COLOR_RESET"webkit init --force\n"
         BOLD_BLACK"  $ "COLOR_RESET"webkit --help\n\n"
     );
+}
+
+void cmd_version(void) {
+    printf("WEBKIT VERSION "PROGRAM_VERSION);
 }
