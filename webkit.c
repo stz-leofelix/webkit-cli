@@ -33,13 +33,15 @@
 #define BOLD_WHITE   "\033[1;37m"
 
 // Program Informations
-#define PROGRAM_VERSION "0.4.4"
+#define PROGRAM_VERSION "0.5.0"
 #define PROGRAM_PRODUCTION_CHANNEL "ALPHA RELEASE"
+
+// Helper functions
+void error(char *type, char *message);
 
 // Function Command
 void cmd_help_all(void);
 void cmd_version(void);
-
 void cmd_init(void);
 void cmd_init_help(void);
 
@@ -99,6 +101,19 @@ int main(int argc, char *argv[])
             break;
         }
     }
+
+    // No commands found
+    printf(BOLD_RED"CommandError: "COLOR_RESET COLOR_YELLOW"'%s\'"COLOR_RESET" is not an valid webkit command\n", argv[1]);
+    printf("\n");
+    free(input);
+    return 0;
+}
+
+// HELPER error
+void error(char *type, char *message) {
+    if (strcmp(type, "command"))
+        printf(BOLD_RED"CommandError: "COLOR_RESET"%s", message);
+    return;
 }
 
 // CMD init help
@@ -287,14 +302,14 @@ void cmd_init(void)
 
 void cmd_help_all(void) {
     printf(
-        BOLD_CYAN "WEBKIT "PROGRAM_VERSION" ("PROGRAM_PRODUCTION_CHANNEL")\n\n" COLOR_RESET
+        BOLD_BLUE "WEBKIT "PROGRAM_VERSION" ("PROGRAM_PRODUCTION_CHANNEL")\n\n" COLOR_RESET
         BOLD_BLUE "Usage: " COLOR_RESET "webkit <command> [options]\n\n"
         BOLD_BLUE "Commands:\n" COLOR_RESET
         "  init                  Initialize standard webkit repository\n"
         "  help                  Display commands and instructions on usage\n\n" 
         BOLD_BLUE "Options:\n" COLOR_RESET
         "  -v, --version         Outputs the current version\n"
-        "  -h, --help            Display commands and instruction on usage\n"
+        "  -h, --help            Display commands and instruction on usage\n\n"
         BOLD_BLUE "Examples:\n" COLOR_RESET
         "  $ webkit init\n"
         "  $ webkit init --help\n"
