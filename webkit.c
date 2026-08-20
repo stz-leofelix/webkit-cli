@@ -6,7 +6,14 @@
 // Reset
 #define COLOR_RESET   "\033[0m"
 
-// Regular Colors
+// Text Styles
+#define STYLE_BOLD    "\033[1m"
+#define STYLE_DIM     "\033[2m"
+#define STYLE_ITALIC  "\033[3m"
+#define STYLE_UNDER   "\033[4m"
+
+// Normal Colors
+#define COLOR_BLACK   "\033[30m"
 #define COLOR_RED     "\033[31m"
 #define COLOR_GREEN   "\033[32m"
 #define COLOR_YELLOW  "\033[33m"
@@ -16,10 +23,18 @@
 #define COLOR_WHITE   "\033[37m"
 
 // Bold Colors
-#define BOLD_RED      "\033[1;31m"
-#define BOLD_GREEN    "\033[1;32m"
-#define BOLD_YELLOW   "\033[1;33m"
-#define BOLD_BLUE     "\033[1;34m"
+#define BOLD_BLACK   "\033[1;30m"
+#define BOLD_RED     "\033[1;31m"
+#define BOLD_GREEN   "\033[1;32m"
+#define BOLD_YELLOW  "\033[1;33m"
+#define BOLD_BLUE    "\033[1;34m"
+#define BOLD_MAGENTA "\033[1;35m"
+#define BOLD_CYAN    "\033[1;36m"
+#define BOLD_WHITE   "\033[1;37m"
+
+// Program Informations
+#define PROGRAM_VERSION "0.2.1"
+#define PROGRAM_PRODUCTION_CHANNEL "ALPHA RELEASE"
 
 // Function Command standard
 void cmds_help_all(void);
@@ -29,8 +44,9 @@ void cmd_init(void);
 
 int main(int argc, char *argv[])
 {
-    // Check if user gives no argument
-    if (argc == 1)
+    printf("\n");
+    // Check if user gives no argument or ask for help
+    if (argc == 1 || argc ==  2 && strcmp(argv[1], "help") || argc ==  2 && strcmp(argv[1], "-h") || argc ==  2 && strcmp(argv[1], "--help"))
     {
         cmds_help_all();
         return 0;
@@ -187,29 +203,30 @@ void cmd_init(void)
         printf(COLOR_GREEN "Success: " COLOR_RESET "Created file js/script.js\n");
     }
 
-    printf("\nInitialized standard webkit repository\n");
+    printf("\nInitialized " BOLD_BLUE "STANDARD WEBKIT" COLOR_RESET " repository\n\n");
 
 }
 
 void cmds_help_all(void) {
     printf(
-        "Usage: webkit <command> [options]\n\n"
-        "A minimal repo generator tool for webdevelopment Currently only designed for vanilla projects without frameworks.\n\n"
-        "Commands:\n"
+        BOLD_CYAN "WEBKIT "PROGRAM_VERSION" ("PROGRAM_PRODUCTION_CHANNEL")\n" COLOR_RESET
+        COLOR_BLACK "A minimal repo generator tool for Web Development Currently only designed for vanilla projects without frameworks.\n\n" COLOR_RESET
+        BOLD_BLUE "Usage: " COLOR_RESET "webkit <command> "COLOR_BLACK"[options]\n\n" COLOR_RESET
+        BOLD_BLUE "Commands:\n" COLOR_RESET
         "  init                  Initialize standard webkit repository\n"
         "  help                  Display commands and instructions on usage\n\n"
-        "Types:\n"
+        BOLD_BLUE "Types:\n" COLOR_RESET
         "  high                  Initialize higher standard webkit repo (Suitable for big projects and websites)\n"
-        "  starter               Initialize a small standard webkit repo (Suitable for small sites or projects)\n"
-        "Options:\n"
+        "  starter               Initialize a small standard webkit repo (Suitable for small sites or projects)\n\n"
+        BOLD_BLUE "Options:\n" COLOR_RESET
         "  -v, --version         Outputs the current version\n"
         "  -h, --help            Display commands and instruction on usage\n"
         "  -f, --force           Delete all files and initalize a repo\n"
         "  -m, --migrate         Migrate already existing files into the initialized repo\n"
         "  -q, --quiet           Suppress all stdout messages\n\n"
-        "Examples:\n"
-        "  $ webkit init\n"
-        "  $ webkit init --force\n"
-        "  $ webkit --help\n"
+        BOLD_BLUE "Examples:\n" COLOR_RESET
+        BOLD_BLACK"  $ "COLOR_RESET"webkit init\n"
+        BOLD_BLACK"  $ "COLOR_RESET"webkit init --force\n"
+        BOLD_BLACK"  $ "COLOR_RESET"webkit --help\n\n"
     );
 }
