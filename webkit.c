@@ -33,11 +33,12 @@
 #define BOLD_WHITE   "\033[1;37m"
 
 // Program Informations
-#define PROGRAM_VERSION "0.5.0"
+#define PROGRAM_VERSION "0.5.2"
 #define PROGRAM_PRODUCTION_CHANNEL "ALPHA RELEASE"
 
 // Helper functions
 void error(char *type, char *message);
+void printhelp(char *sections[][]);
 
 // Function Command
 void cmd_help_all(void);
@@ -103,10 +104,10 @@ int main(int argc, char *argv[])
     }
 
     // No commands found
-    printf(BOLD_RED"CommandError: "COLOR_RESET COLOR_YELLOW"'%s\'"COLOR_RESET" is not an valid webkit command\n", argv[1]);
-    printf("\n");
+    printf(BOLD_BLUE"Webkit: "COLOR_RESET COLOR_YELLOW"'%s\'"COLOR_RESET" is not a valid webkit command\n", argv[1]);
+    printf("See "COLOR_YELLOW"'webkit --help'"COLOR_RESET" for a list of available commands.\n\n");
     free(input);
-    return 0;
+    return 64;
 }
 
 // HELPER error
@@ -294,7 +295,7 @@ void cmd_init(void)
         printf(COLOR_GREEN "Success: " COLOR_RESET "Created file README.md\n");
     }
 
-    printf("\nInitialized " BOLD_BLUE "STANDARD WEBKIT" COLOR_RESET " repository\n\n");
+    printf("\nInitialized " BOLD_BLUE "STANDARD WEBKIT" COLOR_RESET " repository\n");
 }
 
 // CMD init high
@@ -302,7 +303,6 @@ void cmd_init(void)
 
 void cmd_help_all(void) {
     printf(
-        BOLD_BLUE "WEBKIT "PROGRAM_VERSION" ("PROGRAM_PRODUCTION_CHANNEL")\n\n" COLOR_RESET
         BOLD_BLUE "Usage: " COLOR_RESET "webkit <command> [options]\n\n"
         BOLD_BLUE "Commands:\n" COLOR_RESET
         "  init                  Initialize standard webkit repository\n"
